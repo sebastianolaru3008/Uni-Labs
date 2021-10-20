@@ -1,4 +1,3 @@
-//includem fișierul cu definițiile pentru tonuri
 #include "pitches.h"
 int melody[] = {
 NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4, NOTE_D4,
@@ -20,19 +19,3 @@ int noteDurations[] = {
 4,8,8,8,8,4,4,8,8,4,4,8,8,4,4,8,8,
 8,4,8,8,8,4,4,4,8,4,8,8,8,4,4,8,8
 };
-void setup() {
-  //pentru fiecare notă din vectorul melody
-  for (int thisNote = 0; thisNote < (sizeof(melody)/sizeof(melody[0])); thisNote++) {
-    //calculăm durata de afișare a notei
-    int noteDuration = 1000 / noteDurations[thisNote];
-    //apelăm funcția de tone pentru difuzorul atașat la
-    //pinul 8 și durata specificată
-    tone(51, melody[thisNote], noteDuration);
-    int pauseBetweenNotes = noteDuration * 1.30;
-    delay(pauseBetweenNotes);
-    noTone(51);
-  }
-}
-void loop()
-{
-}

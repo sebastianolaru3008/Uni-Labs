@@ -1,7 +1,7 @@
 int buzerPin = 8; //pinul la care atașăm generatorul de sunete
 int puls = 0; // factorul de umplere, inițial 0
 int pas = 10;// pasul de incrementare al factorului de umplere
-int ledPin = 13; //ledul de pe placă
+int ledPin = 2; //ledul de pe placă
 void setup() {
   // declararea pinilor ca ieșire
   pinMode(buzerPin, OUTPUT);

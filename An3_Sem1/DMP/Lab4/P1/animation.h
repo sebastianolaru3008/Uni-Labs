@@ -1,10 +1,10 @@
 #include  <LiquidCrystal.h>
 
-LiquidCrystal lcd(7, 9, 10, 11, 12, 13);
+LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
 
 
 // setting animation speed (delay between frames)
-int x = 150;
+int x = 10;
 // setting time for Man waiting
 int y = 5000;
 
