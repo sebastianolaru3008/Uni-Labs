@@ -546,7 +546,6 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        temp = food.asList()
 
         from search import breadthFirstSearch
         return breadthFirstSearch(problem)
