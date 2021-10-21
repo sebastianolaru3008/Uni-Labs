@@ -294,7 +294,7 @@ class CornersProblem(search.SearchProblem):
     You must select a suitable state space and successor function
     """
 
-    def __init__(self, startingGameState, costFn=lambda x: 1):
+    def __init__(self, startingGameState):
 
       self.walls = startingGameState.getWalls()
       self.startingPosition = startingGameState.getPacmanPosition()
@@ -307,21 +307,20 @@ class CornersProblem(search.SearchProblem):
       self._expanded = 0  # DO NOT CHANGE; Number of search nodes expanded
       # Please add any code here which you would like to use
       # in initializing the problem
-      self.costFn = costFn
-      self.start = (self.startingPosition, (0,0,0,0))
+      self.initialState = [0,0,0,0]
 
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        return self.start
+        return (self.startingPosition,self.initialState)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        if state[1] == (1, 1, 1, 1):
+        if state[1] == [1, 1, 1, 1]:
           return True
         return False
 
@@ -334,6 +333,7 @@ class CornersProblem(search.SearchProblem):
         visited = list(state[1])
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
           x, y = state[0]
+          corn = state[1][:] # Get list of visited corners
           dx, dy = Actions.directionToVector(action)
           nextx, nexty = int(x + dx), int(y + dy)
           if not self.walls[nextx][nexty]:
@@ -347,7 +347,7 @@ class CornersProblem(search.SearchProblem):
                 successors.append(((nextState, visited), action, cost))
             else:
               successors.append(((nextState, state[1]), action, cost))
-          self._expanded += 1 # DO NOT CHANGE
+        self._expanded += 1 # DO NOT CHANGE
         return successors
 
 
@@ -372,22 +372,25 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    corners = problem.corners  # These are the corner coordinates
-    walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
+
+    corners = problem.corners # These are the corner coordinates
+    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    sum = []
-    x,y = state[0]
-    visited = state[1]
-    i = 0
-    for c in corners:
-      sum.append((abs(c[0] - x) + abs(c[1] - y))* (not visited[i]))
-      i = i + 1
-    maxim = sum[0]
-    for s in sum:
-      if maxim < s > 0:
-        maxim = s
-    return maxim  # Default to trivial solution
+
+    from util import manhattanDistance
+
+    if problem.isGoalState(state):
+        return 0
+
+    else:
+        distancesFromGoals = []
+
+        for index,item in enumerate(state[1]):
+            if item == 0: 
+                distancesFromGoals.append(manhattanDistance(state[0],corners[index]))
+
+        return max(distancesFromGoals)
 
 
 class AStarCornersAgent(SearchAgent):
@@ -491,7 +494,26 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+
+    foodL = foodGrid.asList()
+
+    problem.heuristicInfo['wallCount'] = problem.walls.count()
+
+    if problem.isGoalState(state):
+        return 0
+
+    distance = []
+    flag = 0
+
+    for item in foodL:
+        distance.append(mazeDistance(position,item,problem.startingGameState))
+
+        if flag == 4 and problem.heuristicInfo['wallCount'] > 20:
+            break
+
+        flag += 1
+
+    return max(distance)
 
 
 class ClosestDotSearchAgent(SearchAgent):
@@ -524,7 +546,11 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        temp = food.asList()
+
+        from search import breadthFirstSearch
+        return breadthFirstSearch(problem)
+
 
 
 class AnyFoodSearchProblem(PositionSearchProblem):
@@ -561,7 +587,12 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x, y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        foodL = self.food.asList()
+
+        if state in foodL:
+            return True
+        else:
+            return False
 
 
 def mazeDistance(point1, point2, gameState):

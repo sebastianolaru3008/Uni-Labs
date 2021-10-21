@@ -102,102 +102,133 @@ def randomSearch(problem):
 
 def depthFirstSearch(problem):
     """
-    utils.Insert(Comments)
+    Search the deepest nodes in the search tree first.
+    Your search algorithm needs to return a list of actions that reaches the
+    goal. Make sure to implement a graph search algorithm.
+    To get started, you might want to try some of these simple commands to
+    understand the search problem that is being passed in:
     """
-    solution = []
+
+    from util import Stack
+    dfs_stack = Stack()
+
     visited = []
-    mystate = problem.getStartState()
-    stack = Stack()
-    curentNode = Node(mystate, None, None, 0)
-    stack.push(curentNode)
-    while(not problem.isGoalState(curentNode.state) and not stack.isEmpty()):
-        curentNode = stack.pop()
-        visited.append(curentNode.state)
-        if (problem.isGoalState(curentNode.state)):
-            lastNode = curentNode
-            break
+    path = []
+    current_position = problem.getStartState()
 
-        succesors = problem.getSuccessors(curentNode.state)
-        for succesor in succesors:
-            succesorState = succesor[0]
-            if succesorState not in visited:
-                nextNode = Node(succesorState, curentNode,
-                                succesor[1], curentNode.cost + 1)
-                stack.push(nextNode)
+    if problem.isGoalState(current_position):
+        return []
 
-    while lastNode.parent is not None:
-        solution.append(lastNode.action)
-        lastNode = lastNode.parent
-    solution.reverse()
-    return solution
+    dfs_stack.push((current_position,[]))
 
+    while(True):
+
+        if dfs_stack.isEmpty():
+            return []
+
+        position, path = dfs_stack.pop()
+        visited.append(position)
+
+        if problem.isGoalState(position):
+            return path
+
+        succesors = problem.getSuccessors(position)
+
+        if succesors:
+            for item in succesors:
+                if item[0] not in visited:
+
+                    newPath = path + [item[1]] 
+                    dfs_stack.push((item[0],newPath))
 
 def breadthFirstSearch(problem):
-    """
-    utils.Insert(Comments)
-    """
-    solution = []
+    """Search the shallowest nodes in the search tree first."""
+    "*** YOUR CODE HERE ***"
+
+    from util import Queue
+
+    bfs_queue = Queue()
+
     visited = []
-    mystate = problem.getStartState()
-    stack = Queue()
-    visited.append(mystate)
-    curentNode = Node(mystate, None, None, 0)
-    stack.push(curentNode)
-    while(not problem.isGoalState(curentNode.state) and not stack.isEmpty()):
-        curentNode = stack.pop()
-        if (problem.isGoalState(curentNode.state)):
-            lastNode = curentNode
-            break
-        succesors = problem.getSuccessors(curentNode.state)
-        for succesor in succesors:
-            succesorState = succesor[0]
-            if succesorState not in visited:
-                visited.append(succesorState)
-                nextNode = Node(succesorState, curentNode,
-                                succesor[1], curentNode.cost + 1)
-                stack.push(nextNode)
+    path = []
+    current_position = problem.getStartState()
 
-    while lastNode.parent is not None:
-        solution.append(lastNode.action)
-        lastNode = lastNode.parent
-    solution.reverse()
-    return solution
 
+    if problem.isGoalState(current_position):
+        return []
+
+    # Start from the beginning and find a solution, path is empty list #
+    bfs_queue.push((current_position,[]))
+
+    while(True):
+
+        if bfs_queue.isEmpty():
+            return []
+
+        position,path = bfs_queue.pop()
+        visited.append(position)
+
+        if problem.isGoalState(position):
+            return path
+
+        successors = problem.getSuccessors(position)
+
+        if successors:
+            for item in successors:
+                if item[0] not in visited and item[0] not in (state[0] for state in bfs_queue.list):
+
+                    newPath = path + [item[1]]
+                    bfs_queue.push((item[0],newPath))
 
 def uniformCostSearch(problem):
-    """
-    utils.Insert(Comments)
-    """
-    solution = []
-    mystate = problem.getStartState()
-    store = PriorityQueue()
-    map = {}
-    curentNode = Node(mystate, None, None, 0)
-    store.push(curentNode, curentNode.cost)
-    map[mystate] = (curentNode)
-    lastNode = curentNode
-    while (not problem.isGoalState(curentNode.state) and not store.isEmpty()):
-        curentNode = store.pop()
-        if (problem.isGoalState(curentNode.state)):
-            lastNode = curentNode
-            break
-        succesors = problem.getSuccessors(curentNode.state)
-        for (succesorState, succesorAction, succesorCost) in succesors:
-            nextNode = Node(succesorState, curentNode,
-                            succesorAction, curentNode.cost + succesorCost)
-            if (not map.has_key(succesorState)):
-                map[nextNode.state] = nextNode
-                store.push(nextNode, nextNode.cost)
-            elif nextNode.cost < map[succesorState].cost:
-                store.update(nextNode, nextNode.cost)
-                map[nextNode.state] = nextNode
+    """Search the node of least total cost first."""
+    "*** YOUR CODE HERE ***"
 
-    while lastNode.parent is not None:
-        solution.append(lastNode.action)
-        lastNode = lastNode.parent
-    solution.reverse()
-    return solution
+    from util import PriorityQueue
 
+    ucs_queue = PriorityQueue()
+
+    visited = [] 
+    path = [] 
+    current_position = problem.getStartState()
+
+    if problem.isGoalState(current_position):
+        return []
+    
+    ucs_queue.push((current_position,[]),0)
+
+    while(True):
+
+        if ucs_queue.isEmpty():
+            return []
+
+        position,path = ucs_queue.pop()
+        visited.append(position)
+
+        if problem.isGoalState(position):
+            return path
+
+        successors = problem.getSuccessors(position)
+
+        if successors:
+            for item in successors:
+                if item[0] not in visited and (item[0] not in (state[2][0] for state in ucs_queue.heap)):
+
+                    newPath = path + [item[1]]
+                    pri = problem.getCostOfActions(newPath)
+
+                    ucs_queue.push((item[0],newPath),pri)
+
+                elif item[0] not in visited and (item[0] in (state[2][0] for state in ucs_queue.heap)):
+                    for state in ucs_queue.heap:
+                        if state[2][0] == item[0]:
+                            oldPriority = problem.getCostOfActions(state[2][1])
+
+                    newPriority = problem.getCostOfActions(path + [item[1]])
+
+                    if oldPriority > newPriority:
+                        newPath = path + [item[1]]
+                        ucs_queue.update((item[0],newPath),newPriority)
 
 def nullHeuristic(state, problem=None):
     """
@@ -206,38 +237,72 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+from util import PriorityQueue
+class MyPriorityQueueWithFunction(PriorityQueue):
+    """
+    Implements a priority queue with the same push/pop signature of the
+    Queue and the Stack classes. This is designed for drop-in replacement for
+    those two classes. The caller has to provide a priority function, which
+    extracts each item's priority.
+    """
+    def  __init__(self, problem, priorityFunction):
+        "priorityFunction (item) -> priority"
+        self.priorityFunction = priorityFunction
+        PriorityQueue.__init__(self)
+        self.problem = problem
+    def push(self, item, heuristic):
+        "Adds an item to the queue with priority from the priority function"
+        PriorityQueue.push(self, item, self.priorityFunction(self.problem,item,heuristic))
+
+def f(problem,state,heuristic):
+
+    return problem.getCostOfActions(state[1]) + heuristic(state[0],problem)
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-  solution = []
-  mystate = problem.getStartState()
-  store = PriorityQueue()
-  map = {}
-  curentNode = Node(mystate, None, None, 0)
-  store.push(curentNode, curentNode.cost)
-  map[mystate] = (curentNode)
-  lastNode = curentNode
-  while (not problem.isGoalState(curentNode.state) and not store.isEmpty()):
-    curentNode = store.pop()
-    if (problem.isGoalState(curentNode.state)):
-      lastNode = curentNode
-      break
-    succesors = problem.getSuccessors(curentNode.state)
-    for (succesorState, succesorAction, succesorCost) in succesors:
-      nextNode = Node(succesorState, curentNode,
-                      succesorAction, curentNode.cost + succesorCost)
-      if (not map.has_key(succesorState)):
-          map[nextNode.state] = nextNode
-          store.push(nextNode, nextNode.cost + heuristic(succesorState,problem))
-      elif nextNode.cost < map[succesorState].cost:
-          store.push(nextNode, nextNode.cost + heuristic(succesorState,problem))
-          map[nextNode.state] = nextNode
+    """Search the node that has the lowest combined cost and heuristic first."""
+    "*** YOUR CODE HERE ***"
 
-  while lastNode.parent is not None:
-    solution.append(lastNode.action)
-    lastNode = lastNode.parent
-  solution.reverse()
-  return solution
+    astar_queue = MyPriorityQueueWithFunction(problem,f)
 
+    path = []
+    visited = []
+    current_position = problem.getStartState()
+
+    if problem.isGoalState(current_position):
+        return []
+
+    item_elem = (current_position,[])
+
+    astar_queue.push(item_elem,heuristic)
+
+    while(True):
+
+        if astar_queue.isEmpty():
+            return []
+
+        xy,path = astar_queue.pop()
+
+        if xy in visited:
+            continue
+
+        visited.append(xy)
+
+        if problem.isGoalState(xy):
+            return path
+
+        succ = problem.getSuccessors(xy)
+
+        if succ:
+            for item in succ:
+                if item[0] not in visited:
+
+                    newPath = path + [item[1]]
+                    element = (item[0],newPath)
+                    astar_queue.push(element,heuristic)
+
+# Editor:
+# Sdi1500129
+# Petropoulakis Panagiotis
 
 # Abbreviations
 bfs = breadthFirstSearch
