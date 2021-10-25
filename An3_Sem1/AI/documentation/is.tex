@@ -1,0 +1,174 @@
+\documentclass[a4paper,12pt]{report}
+\usepackage{algorithmic}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage[margin=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{listings} 
+\usepackage{graphicx} 
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{verbatim}
+%\usepackage{mdframed}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{codeBoxStyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\newcommand{\currentdata}{14 February 2015}
+\newtheorem{example}{Example}
+
+\begin{document}
+\vspace{-5cm}
+\begin{center}
+Department of Computer Science\\
+Technical University of Cluj-Napoca\\
+\includegraphics[width=10cm]{fig/footer}
+\end{center}
+\vspace{1cm}
+%\maketitle
+\begin{center}
+\begin{Large}
+ \textbf{Artificial Intelligence}\\
+\end{Large}
+\textit{Laboratory activity}\\
+\vspace{3cm}
+Name:\\
+Podina Tudor\\
+Tudor Roxana\\
+\vspace{1cm}
+Group:\\
+30434\\
+\vspace{1cm}
+Email:\\
+tpodina@gmail.com / Podina.Do.Tudor@student.utcluj.ro\\
+roxi13.tudor@gmail.com / Tudor.Co.Roxana@student.utcluj.ro\\
+\vspace{8cm}
+Teaching Assistant: Adrian Groza\\
+Adrian.Groza@cs.utcluj.ro\\
+\vspace{1cm}
+\includegraphics[width=10cm]{fig/footer}
+\end{center}
+
+\tableofcontents
+
+\input{policy}
+
+%\chapter{Laboratory works}
+
+\chapter{A1: Search - Pacman Wants a Family}
+\section{Preview}
+\textbf{What was the goal?} The goal of this assignment was to allow us to take a deep dive into the Pacman framework.\\
+In doing so, we had the opportunity to understand how each method gets called and when. Moreover, we got to experience first-hand
+what happens under the hood of the framework.\\
+Besides the framework-side of the assignment, we were also given the chance to experiment with multiagents and how they
+work, as well as research how NPC's work, not just within the Pacman game, but as a whole.\\
+As a final mention, we also wanted to do something extra and had the chance to read some PhD papers. And while they
+proved too difficult to implement on short notice (some were even outside the subject of this semster), they proved to be
+very insightful.
+\section{Keyboard agent}
+\subsection{Gameplay}
+We decided on switching the role of Pacman from being chased to chasing either Ms. Pacman or food.\\
+This allowed to introduce Ms. Pacman as an agent that could be controlled via keyboard. We also focused
+on giving Ms. Pacman a hard time by allowing Pacman to eat her food, thus lowering her score.
+\subsection{Objective}
+\textbf{Survive.} On a serious note, what the player (Ms. Pacman) has to do is very similar to the default
+version of Pacman: eat food and avoid ghosts. There is an improvement with respect to the challenge, since
+Ms. Pacman also has to deal with Pacman eating her food, causing her to lose out on points.
+\section{Multiagents}
+\subsection{Objective}
+As mentioned before, Pacman gets an upgrade within our version of the game, meaning that he is the "antagonist"
+now. We decided to replace the concept of ghosts with Pacmen that share a common goal of eating as much as possible
+and chasing Ms. Pacman.
+\subsection{How do they work?}
+At first, we needed to figure out how to compute the next steps based on the current location of Ms. Pacman.
+With this in mind, we explored the concept of \emph{ghost agents} which have a \emph{getDistribution} method.
+This method generates a distribution based on a list of the best actions that Pacman can take*.\\
+We also focused on having two types of agents. One of them works using the \emph{manhattan distance} while the other uses the \emph{maze distance} towards a goal.
+It is also worth noting that we tweaked the goal to be composed of food and Ms. Pacman. This means that Pacman either chases
+food or Ms. Pacman depending on who is closer. Also, we played a little with the idea of attaching a probability of being chosen
+as a goal for each of the two targets. While our implementation allows this, we did not have enough time to implement
+and test this properly, so we will leave it for a future improvement.\\
+Note*: There is something in the framework that we decided not to change, but we are aware of it: the action that
+Pacman eventually takes is randomly picked.
+\chapter{A2. Planning}
+\section{How we chose the task}
+Initially, we wanted to combine the idea of having Ms. Pacman with random maze generation and junior Pacmen.
+Instead of overloading our assignment with ambitious ideas that we may or may not have implemented properly,
+we decided to stick with adding Ms. Pacman as the agent controlled by the player and multiple Pacmen replacing
+the default ghosts.\\
+After some brainstorming, we also decided on having Pacman eat Ms. Pacman's food.
+\section{Sub-task distribution}
+At first, we did some pair programming, mostly to setup the project, do the necessary research and explore the
+framework to decide upon what needs to be done and what is already implemented.\\
+After that, we tried to parallelize the development process and distributed the tasks as such: \begin{enumerate}
+    \item Random maze generation - discarded - Podina. T
+    \item Ms. Pacman and Pacmen animations - Tudor. R
+    \item Multiagents decision making - Podina. T
+    \item Multiagents food eating - Tudor. R
+    \item User experience improvements - Podina. T, Tudor R.
+    \item Documentation: \begin{enumerate}
+        \item Writing and structuring - Podina. T
+        \item Quality control and refactoring - Tudor. R
+    \end{enumerate}
+\end{enumerate}
+
+\bibliographystyle{plain}
+\bibliography{is}
+\begin{enumerate}
+    \item \url{http://ai.berkeley.edu/multiagent.html} - base project
+    \item \url{https://github.com/lb5160482/Pacman-Search} \label{search_github_repo} - useful for examples and PositionSearchProblem which we used for the Pacmen agents
+\end{enumerate}
+
+\appendix
+
+\chapter{Your original code}
+Don't be a cheater! Cheating affects your colleagues, scholarships and a lot more.
+This section should contain only code developed by you, without any line re-used from other sources. 
+This section helps me to correctly evaluate your amount of work and results obtained. 
+
+\vspace{0.5cm}
+\lstset{style=codeBoxStyle}
+\lstinputlisting[language=python]{code/MazeDirectionalPacman.py}
+\vspace{0.5cm}
+Note 1: DirectionalPacman works the same, only it uses the manhattan istance, rather than the maze distance.\\
+Note 2: The mazeDistance() method is defined in the repository mentioned here \ref{search_github_repo}. We used
+helpers from the said repository and made a slight adjustment to the method to work with our code. Here is the
+implementation from our code.
+\vspace{0.5cm}
+\lstset{style=codeBoxStyle}
+\lstinputlisting[language=python]{code/MazeDistance.py}
+\vspace{0.5cm}
+Note 3: as a future improvement to this method, it would be interesting to allow the user to set which search
+algorithm to use for the mazeDistance() method. By default, we are using the Iterative Deepening Search. Maybe
+the search algorithm would be swapped for a better one as the user sets a higher difficutly to the game.
+
+\vspace{2cm}
+\begin{center}
+Intelligent Systems Group\\
+\includegraphics[width=10cm]{fig/footer}
+\end{center}
+
+
+
+\end{document}

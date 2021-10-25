@@ -18,6 +18,7 @@ Pacman agents (in searchAgents.py).
 """
 
 
+from util import PriorityQueue
 import copy
 import random
 
@@ -119,7 +120,7 @@ def depthFirstSearch(problem):
     if problem.isGoalState(current_position):
         return []
 
-    dfs_stack.push((current_position,[]))
+    dfs_stack.push((current_position, []))
 
     while(True):
 
@@ -138,8 +139,9 @@ def depthFirstSearch(problem):
             for item in succesors:
                 if item[0] not in visited:
 
-                    newPath = path + [item[1]] 
-                    dfs_stack.push((item[0],newPath))
+                    newPath = path + [item[1]]
+                    dfs_stack.push((item[0], newPath))
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
@@ -153,19 +155,18 @@ def breadthFirstSearch(problem):
     path = []
     current_position = problem.getStartState()
 
-
     if problem.isGoalState(current_position):
         return []
 
     # Start from the beginning and find a solution, path is empty list #
-    bfs_queue.push((current_position,[]))
+    bfs_queue.push((current_position, []))
 
     while(True):
 
         if bfs_queue.isEmpty():
             return []
 
-        position,path = bfs_queue.pop()
+        position, path = bfs_queue.pop()
         visited.append(position)
 
         if problem.isGoalState(position):
@@ -178,7 +179,8 @@ def breadthFirstSearch(problem):
                 if item[0] not in visited and item[0] not in (state[0] for state in bfs_queue.list):
 
                     newPath = path + [item[1]]
-                    bfs_queue.push((item[0],newPath))
+                    bfs_queue.push((item[0], newPath))
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
@@ -188,21 +190,21 @@ def uniformCostSearch(problem):
 
     ucs_queue = PriorityQueue()
 
-    visited = [] 
-    path = [] 
+    visited = []
+    path = []
     current_position = problem.getStartState()
 
     if problem.isGoalState(current_position):
         return []
-    
-    ucs_queue.push((current_position,[]),0)
+
+    ucs_queue.push((current_position, []), 0)
 
     while(True):
 
         if ucs_queue.isEmpty():
             return []
 
-        position,path = ucs_queue.pop()
+        position, path = ucs_queue.pop()
         visited.append(position)
 
         if problem.isGoalState(position):
@@ -217,7 +219,7 @@ def uniformCostSearch(problem):
                     newPath = path + [item[1]]
                     pri = problem.getCostOfActions(newPath)
 
-                    ucs_queue.push((item[0],newPath),pri)
+                    ucs_queue.push((item[0], newPath), pri)
 
                 elif item[0] not in visited and (item[0] in (state[2][0] for state in ucs_queue.heap)):
                     for state in ucs_queue.heap:
@@ -228,7 +230,8 @@ def uniformCostSearch(problem):
 
                     if oldPriority > newPriority:
                         newPath = path + [item[1]]
-                        ucs_queue.update((item[0],newPath),newPriority)
+                        ucs_queue.update((item[0], newPath), newPriority)
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -237,7 +240,7 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-from util import PriorityQueue
+
 class MyPriorityQueueWithFunction(PriorityQueue):
     """
     Implements a priority queue with the same push/pop signature of the
@@ -245,24 +248,29 @@ class MyPriorityQueueWithFunction(PriorityQueue):
     those two classes. The caller has to provide a priority function, which
     extracts each item's priority.
     """
-    def  __init__(self, problem, priorityFunction):
+
+    def __init__(self, problem, priorityFunction):
         "priorityFunction (item) -> priority"
         self.priorityFunction = priorityFunction
         PriorityQueue.__init__(self)
         self.problem = problem
+
     def push(self, item, heuristic):
         "Adds an item to the queue with priority from the priority function"
-        PriorityQueue.push(self, item, self.priorityFunction(self.problem,item,heuristic))
+        PriorityQueue.push(self, item, self.priorityFunction(
+            self.problem, item, heuristic))
 
-def f(problem,state,heuristic):
 
-    return problem.getCostOfActions(state[1]) + heuristic(state[0],problem)
+def f(problem, state, heuristic):
+
+    return problem.getCostOfActions(state[1]) + heuristic(state[0], problem)
+
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
 
-    astar_queue = MyPriorityQueueWithFunction(problem,f)
+    astar_queue = MyPriorityQueueWithFunction(problem, f)
 
     path = []
     visited = []
@@ -271,16 +279,16 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     if problem.isGoalState(current_position):
         return []
 
-    item_elem = (current_position,[])
+    item_elem = (current_position, [])
 
-    astar_queue.push(item_elem,heuristic)
+    astar_queue.push(item_elem, heuristic)
 
     while(True):
 
         if astar_queue.isEmpty():
             return []
 
-        xy,path = astar_queue.pop()
+        xy, path = astar_queue.pop()
 
         if xy in visited:
             continue
@@ -297,12 +305,13 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 if item[0] not in visited:
 
                     newPath = path + [item[1]]
-                    element = (item[0],newPath)
-                    astar_queue.push(element,heuristic)
+                    element = (item[0], newPath)
+                    astar_queue.push(element, heuristic)
 
 # Editor:
 # Sdi1500129
 # Petropoulakis Panagiotis
+
 
 # Abbreviations
 bfs = breadthFirstSearch
