@@ -1,0 +1,4 @@
+#Tue Oct 26 00:34:54 EEST 2021
+base.0=D\:\\Facultate\\Uni-Labs\\An3_Sem1\\SE\\learning\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
