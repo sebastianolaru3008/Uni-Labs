@@ -51,6 +51,7 @@ dlldata.c
 *.idb
 *.tlog
 *.exe
+*.ipch
 
 # Chutzpah Test files
 _Chutzpah*
